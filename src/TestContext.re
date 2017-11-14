@@ -1,22 +1,15 @@
-module ContextMap = Map.Make(String);
+    let create = () => {
+      val mutable data = 0;
+      pub add = () => { data = data + 1; this };
+      pub get = () => data;
+    };
 
-type t = {.
-  add: 'a. string => 'a => t,
-  get: 'a. string => 'a
-};
+    let ctx1 = create();
 
-let create = (metaData) : t => {
-  val data = ref(metaData);
-  pub add : 'a. string => 'a => t = (key,x) => { data := data^ |> ContextMap.add(key, Obj.repr(x)); this };
-  pub get : 'a. string => 'a = (key) => data^ |> ContextMap.find(key) |> Obj.obj;
-  };
-
-let ctx1 = create(ContextMap.empty);
-
-let result : int = ctx1#add("key", 42)#get("key");
-(result == 42) ? Js.log("SUCCESS") : Js.log("ERROR");
+    let result = ctx1#add()#get();
+    (result == 1) ? Js.log("SUCCESS") : Js.log("ERROR");
 
 
-let ctx2 = create(ContextMap.empty);
-let result : int = ctx2#add("key", 42)#add("key", 43)#get("key");
-(result == 42) ? Js.log("SUCCESS") : Js.log("ERROR");
+    let ctx2 = create();
+    let result = ctx2#add()#add()#get();
+    (result == 2) ? Js.log("SUCCESS") : Js.log("ERROR");
